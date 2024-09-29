@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  backend:
+    image: node:18-alpine
+    container_name: backend_cats_api
+    working_dir: /usr/src/app
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - "3000:3000"
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/catsdb
+      - API_KEY=${API_KEY}
+    command: sh -c "npm install && npx ts-node server.ts"
+    depends_on:
+      - mongo
+
+  mongo:
+    image: mongo:latest
+    container_name: mongo_db
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+volumes:
+  mongo_data:
